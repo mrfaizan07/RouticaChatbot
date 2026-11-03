@@ -1,0 +1,56 @@
+services:
+  # 1. FastAPI Backend Web Service
+  - type: web
+    name: routica-ai-backend
+    env: python
+    region: oregon
+    plan: free
+    rootDir: backend
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: DEBUG
+        value: false
+      - key: CHAT_PRIMARY_PROVIDER
+        value: groq
+      - key: CHAT_PRIMARY_MODEL
+        value: groq/qwen/qwen3.8-27b
+      - key: CHAT_FALLBACK_MODELS
+        value: gemini/gemini-3.5-flash-lite,openrouter/meta-llama/llama-3.3-70b-instruct,groq/openai/gpt-oss-120b,groq/openai/gpt-oss-20b
+      - key: EMBEDDING_PROVIDER
+        value: gemini
+      - key: EMBEDDING_MODEL
+        value: gemini-embedding-001
+      - key: EMBEDDING_DIMENSIONS
+        value: 768
+      - key: MONGODB_DATABASE
+        value: routica_chatbot
+      - key: RATE_LIMIT_PER_MINUTE
+        value: 60
+      # Sensitive keys should be set in Render Dashboard:
+      # MONGODB_URI, GROQ_API_KEY, GROQ_API_KEY1, GEMINI_API_KEY, OPENROUTER_API_KEY, JWT_SECRET_KEY, ADMIN_EMAIL, ADMIN_PASSWORD
+
+  # 2. React Vite Frontend Static Site
+  - type: web
+    name: routica-ai-frontend
+    env: static
+    region: oregon
+    plan: free
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist
+    autoDeploy: true
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    envVars:
+      - key: VITE_API_BASE_URL
+        fromService:
+          type: web
+          name: routica-ai-backend
+          property: host
