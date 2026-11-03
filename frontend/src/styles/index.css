@@ -9,14 +9,14 @@
   }
   
   body {
-    @apply bg-slate-50 text-slate-900 antialiased;
+    @apply bg-slate-50 text-slate-900 antialiased selection:bg-blue-100 selection:text-blue-900;
   }
 }
 
 /* Custom crisp scrollbars for chat message area */
 .chat-scrollbar::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 5px;
+  height: 5px;
 }
 
 .chat-scrollbar::-webkit-scrollbar-track {
@@ -32,10 +32,19 @@
   background: #94a3b8;
 }
 
+/* Hide scrollbars when desired */
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
 /* Markdown styling inside assistant message */
 .markdown-body {
   font-size: 0.9375rem;
-  line-height: 1.6;
+  line-height: 1.62;
   color: #1e293b;
 }
 
@@ -72,47 +81,61 @@
 }
 
 .markdown-body li {
-  margin-bottom: 0.25rem;
+  margin-bottom: 0.35rem;
+  line-height: 1.55;
+}
+
+.markdown-body strong {
+  color: #0f172a;
+  font-weight: 600;
 }
 
 .markdown-body code {
   background-color: #f1f5f9;
-  color: #0369a1;
-  padding: 0.125rem 0.375rem;
-  border-radius: 0.25rem;
-  font-size: 0.875em;
+  color: #0284c7;
+  padding: 0.15rem 0.4rem;
+  border-radius: 0.375rem;
+  font-size: 0.85em;
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  border: 1px solid #e2e8f0;
 }
 
 .markdown-body pre {
   background-color: #0f172a;
   color: #f8fafc;
   padding: 0.75rem 1rem;
-  border-radius: 0.5rem;
+  border-radius: 0.75rem;
   overflow-x: auto;
   margin-bottom: 0.75rem;
-  font-size: 0.875rem;
+  font-size: 0.85rem;
 }
 
 .markdown-body pre code {
   background-color: transparent;
   color: inherit;
   padding: 0;
+  border: none;
 }
 
 .markdown-body blockquote {
   border-left: 3px solid #0284c7;
-  padding-left: 0.75rem;
+  padding-left: 0.85rem;
   color: #475569;
   font-style: italic;
   margin-bottom: 0.75rem;
+  background: #f8fafc;
+  border-radius: 0 0.5rem 0.5rem 0;
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
 }
 
 .markdown-body table {
   width: 100%;
   border-collapse: collapse;
   margin-bottom: 0.75rem;
-  font-size: 0.875rem;
+  font-size: 0.85rem;
+  border-radius: 0.5rem;
+  overflow: hidden;
 }
 
 .markdown-body th,
@@ -125,15 +148,33 @@
 .markdown-body th {
   background-color: #f8fafc;
   font-weight: 600;
+  color: #0f172a;
 }
 
 .markdown-body a {
   color: #0284c7;
   text-decoration: underline;
   text-underline-offset: 2px;
+  font-weight: 500;
+  transition: color 0.15s ease;
 }
 
 .markdown-body a:hover {
   color: #0369a1;
 }
 
+/* Smooth micro-animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.22s ease-out forwards;
+}

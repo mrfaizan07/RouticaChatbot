@@ -21,11 +21,11 @@ export function ChatMessage({ message }) {
     return (
       <div className="flex justify-end my-3 animate-fade-in">
         <div className="flex items-end gap-2 max-w-[85%] sm:max-w-[78%]">
-          <div className="px-4 py-2.5 rounded-2xl rounded-br-xs bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-sm text-sm leading-relaxed whitespace-pre-wrap word-break break-words select-text">
+          <div className="px-4 py-2.5 rounded-2xl rounded-br-xs bg-gradient-to-r from-blue-600 via-blue-600 to-indigo-600 text-white shadow-sm text-sm leading-relaxed whitespace-pre-wrap word-break break-words select-text">
             {message.content}
           </div>
-          <div className="w-7 h-7 rounded-full bg-slate-200 border border-slate-300/60 text-slate-700 flex items-center justify-center flex-shrink-0 text-xs shadow-xs">
-            <User className="w-4 h-4" />
+          <div className="w-7 h-7 rounded-full bg-slate-200 border border-slate-300/80 text-slate-700 flex items-center justify-center flex-shrink-0 text-xs shadow-xs">
+            <User className="w-3.5 h-3.5 text-slate-600" />
           </div>
         </div>
       </div>
@@ -38,8 +38,8 @@ export function ChatMessage({ message }) {
   return (
     <div className="flex justify-start my-3 animate-fade-in group">
       <div className="flex items-start gap-2.5 max-w-[95%] sm:max-w-[88%]">
-        <div className="w-7 h-7 rounded-xl bg-slate-900 border border-slate-800 text-white flex items-center justify-center flex-shrink-0 mt-0.5 shadow-sm">
-          <Sparkles className="w-3.5 h-3.5 text-blue-400" />
+        <div className="relative w-7 h-7 rounded-xl bg-gradient-to-tr from-slate-950 to-slate-800 border border-slate-700/80 text-white flex items-center justify-center flex-shrink-0 mt-0.5 shadow-sm">
+          <Sparkles className="w-3.5 h-3.5 text-blue-400 animate-pulse" />
         </div>
 
         <div className="flex flex-col flex-1 min-w-0">
@@ -72,14 +72,14 @@ export function ChatMessage({ message }) {
             {/* Response Footer (Model badge & Copy) */}
             {!message.isStreaming && message.content && (
               <div className="flex items-center justify-between mt-2.5 pt-1.5 border-t border-slate-100 text-[11px] text-slate-400 select-none">
-                <span className="font-mono text-[10px] text-slate-400 bg-slate-50 px-1.5 py-0.5 rounded border border-slate-100">
+                <span className="font-mono text-[10px] text-slate-500 bg-slate-50 px-2 py-0.5 rounded-md border border-slate-100">
                   {message.model ? message.model.split("/").pop() : "Routica Verified"}
                 </span>
 
                 <button
                   type="button"
                   onClick={handleCopy}
-                  title="Copy to clipboard"
+                  title="Copy response to clipboard"
                   className="inline-flex items-center gap-1 text-slate-400 hover:text-slate-700 transition-colors px-1.5 py-0.5 rounded hover:bg-slate-100"
                 >
                   {copied ? (

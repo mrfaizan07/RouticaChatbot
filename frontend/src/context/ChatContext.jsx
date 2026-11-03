@@ -1,5 +1,5 @@
 /**
- * Global Chat Context providing launcher state, backend status, and chat operations.
+ * Global Chat Context providing launcher state, backend status, quick options, and chat operations.
  */
 
 import React, { createContext, useContext, useState, useEffect } from "react";
@@ -10,6 +10,7 @@ const ChatContext = createContext(null);
 
 export function ChatProvider({ children }) {
   const [isOpen, setIsOpen] = useState(false);
+  const [isQuickTopicsOpen, setIsQuickTopicsOpen] = useState(false);
   const [backendStatus, setBackendStatus] = useState("checking"); // 'ready' | 'degraded' | 'offline' | 'checking'
   const [statusDetails, setStatusDetails] = useState(null);
 
@@ -54,14 +55,32 @@ export function ChatProvider({ children }) {
   }, []);
 
   const openChat = () => setIsOpen(true);
-  const closeChat = () => setIsOpen(false);
+  const closeChat = () => {
+    setIsOpen(false);
+    setIsQuickTopicsOpen(false);
+  };
   const toggleChat = () => setIsOpen((prev) => !prev);
+
+  const toggleQuickTopics = () => setIsQuickTopicsOpen((prev) => !prev);
+  const openQuickTopics = () => setIsQuickTopicsOpen(true);
+  const closeQuickTopics = () => setIsQuickTopicsOpen(false);
+
+  // Auto-close quick topics when a message is sent
+  const sendQuickPrompt = (query) => {
+    setIsQuickTopicsOpen(false);
+    chat.sendMessage(query);
+  };
 
   const value = {
     isOpen,
     openChat,
     closeChat,
     toggleChat,
+    isQuickTopicsOpen,
+    toggleQuickTopics,
+    openQuickTopics,
+    closeQuickTopics,
+    sendQuickPrompt,
     backendStatus,
     statusDetails,
     ...chat,
@@ -77,4 +96,3 @@ export function useChat() {
   }
   return context;
 }
-

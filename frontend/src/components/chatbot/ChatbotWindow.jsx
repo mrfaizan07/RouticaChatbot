@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChatHeader } from "./ChatHeader";
+import { QuickTopicsDrawer } from "./QuickTopicsDrawer";
 import { ChatMessages } from "./ChatMessages";
 import { ChatInput } from "./ChatInput";
 import { useChat } from "../../context/ChatContext";
@@ -32,9 +33,10 @@ export function ChatbotWindow() {
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={{ opacity: 0, y: 20, scale: 0.96 }}
           transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
-          className="fixed bottom-0 right-0 sm:bottom-24 sm:right-6 z-50 w-full h-[100dvh] sm:h-[640px] sm:max-h-[85vh] sm:w-[420px] flex flex-col bg-white sm:rounded-3xl shadow-2xl shadow-slate-950/20 border border-slate-200/90 overflow-hidden"
+          className="fixed bottom-0 right-0 sm:bottom-24 sm:right-6 z-50 w-full h-[100dvh] sm:h-[660px] sm:max-h-[88vh] sm:w-[430px] flex flex-col bg-white sm:rounded-3xl shadow-2xl shadow-slate-950/25 border border-slate-200/90 overflow-hidden"
         >
           <ChatHeader />
+          <QuickTopicsDrawer />
           <ChatMessages />
           <ChatInput />
         </motion.div>

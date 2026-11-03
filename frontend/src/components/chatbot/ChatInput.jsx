@@ -1,12 +1,19 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Send, Square } from "lucide-react";
-import { MAX_MESSAGE_LENGTH } from "../../config/constants";
+import { Send, Square, Compass, Sparkles } from "lucide-react";
+import { MAX_MESSAGE_LENGTH, SUGGESTED_QUESTIONS } from "../../config/constants";
 import { useChat } from "../../context/ChatContext";
 
 export function ChatInput() {
   const [input, setInput] = useState("");
   const textareaRef = useRef(null);
-  const { sendMessage, isStreaming, cancelGeneration } = useChat();
+  const {
+    sendMessage,
+    isStreaming,
+    cancelGeneration,
+    messages,
+    toggleQuickTopics,
+    sendQuickPrompt,
+  } = useChat();
 
   // Auto-resize textarea height
   useEffect(() => {
@@ -36,10 +43,47 @@ export function ChatInput() {
   const isOverLimit = input.length > MAX_MESSAGE_LENGTH;
   const canSend = input.trim().length > 0 && !isOverLimit && !isStreaming;
 
+  // Recent quick chips for 1-click queries
+  const quickPills = [
+    "Explorer I vs II",
+    "Dual-SIM failover",
+    "Pricing & guarantee",
+    "Marine IP67 rating",
+  ];
+
   return (
     <footer className="p-3 border-t border-slate-200/80 bg-white sm:rounded-b-3xl">
+      {/* Quick Prompts Bar (visible during conversation) */}
+      {messages.length > 0 && (
+        <div className="flex items-center gap-1.5 pb-2.5 overflow-x-auto scrollbar-none text-[11px]">
+          <button
+            type="button"
+            onClick={toggleQuickTopics}
+            className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200/80 font-medium hover:bg-blue-100 flex-shrink-0 transition-colors shadow-xs"
+          >
+            <Sparkles className="w-2.5 h-2.5 text-blue-600" />
+            <span>Topics</span>
+          </button>
+
+          {quickPills.map((pill, idx) => (
+            <button
+              key={idx}
+              type="button"
+              disabled={isStreaming}
+              onClick={() => {
+                const match = SUGGESTED_QUESTIONS.find((q) => q.title.includes(pill) || pill.includes(q.category));
+                sendQuickPrompt(match ? match.query : `Tell me about Routica ${pill}`);
+              }}
+              className="px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600 hover:text-slate-900 hover:bg-slate-200/70 border border-slate-200/60 font-medium transition-colors flex-shrink-0 disabled:opacity-40"
+            >
+              {pill}
+            </button>
+          ))}
+        </div>
+      )}
+
       <form onSubmit={handleSubmit} className="relative flex flex-col">
-        <div className="relative flex items-end gap-2 bg-slate-50 border border-slate-200 focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-500/20 rounded-2xl px-3.5 py-2.5 transition-all shadow-xs">
+        <div className="relative flex items-end gap-2 bg-slate-50 border border-slate-200 focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-500/15 rounded-2xl px-3.5 py-2.5 transition-all shadow-xs">
           <textarea
             ref={textareaRef}
             rows={1}
@@ -48,7 +92,7 @@ export function ChatInput() {
             onKeyDown={handleKeyDown}
             placeholder={
               isStreaming
-                ? "Routica Assistant is answering..."
+                ? "Routica Assistant is generating..."
                 : "Ask about Explorer I, II, 5G specs, pricing..."
             }
             aria-label="Chat message input"
@@ -71,7 +115,7 @@ export function ChatInput() {
               disabled={!canSend}
               title="Send message (Enter)"
               aria-label="Send message"
-              className="flex items-center justify-center w-8 h-8 rounded-xl bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 disabled:opacity-30 disabled:cursor-not-allowed text-white shadow-xs transition-transform active:scale-95 flex-shrink-0"
+              className="flex items-center justify-center w-8 h-8 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 disabled:opacity-30 disabled:cursor-not-allowed text-white shadow-xs transition-all active:scale-95 flex-shrink-0"
             >
               <Send className="w-3.5 h-3.5 ml-0.5" />
             </button>

@@ -28,17 +28,27 @@ export const SUGGESTED_QUESTIONS = [
   },
   {
     title: "Marine & RV Internet",
-    query: "How does Routica provide internet connectivity for boats, yachts, and RVs?",
+    query: "How does Routica provide reliable internet connectivity for boats, yachts, and RVs?",
     category: "Solutions",
   },
   {
-    title: "Pricing & Guarantee",
+    title: "Dual SIM & Carrier Failover",
+    query: "How does the dual-SIM automatic carrier failover work on Routica routers?",
+    category: "Specs",
+  },
+  {
+    title: "Pricing & 30-Day Guarantee",
     query: "What is the price of Explorer I and Explorer II, and is there a money-back guarantee?",
     category: "Support",
   },
   {
-    title: "5G & Wi-Fi 6 Specs",
-    query: "What are the 5G and Wi-Fi 6 technical specifications for Routica routers?",
+    title: "5G & Wi-Fi 6 Specifications",
+    query: "What are the 5G cellular speed and Wi-Fi 6 technical specifications for Routica routers?",
     category: "Specs",
+  },
+  {
+    title: "Installation & Setup Guide",
+    query: "How do I install and power the Routica Explorer on my RV or marine vessel?",
+    category: "Support",
   },
 ];

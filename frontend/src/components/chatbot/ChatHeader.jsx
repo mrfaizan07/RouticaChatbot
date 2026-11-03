@@ -1,11 +1,19 @@
 import React from "react";
-import { RotateCcw, X, Sparkles } from "lucide-react";
+import { RotateCcw, X, Sparkles, HelpCircle, Compass } from "lucide-react";
 import { IconButton } from "../common/IconButton";
 import { RouticaLogo } from "../common/RouticaLogo";
 import { useChat } from "../../context/ChatContext";
 
 export function ChatHeader() {
-  const { closeChat, startNewConversation, backendStatus, messages, isStreaming } = useChat();
+  const {
+    closeChat,
+    startNewConversation,
+    backendStatus,
+    messages,
+    isStreaming,
+    isQuickTopicsOpen,
+    toggleQuickTopics,
+  } = useChat();
 
   const isOnline = backendStatus === "ready";
 
@@ -17,8 +25,8 @@ export function ChatHeader() {
           <div className="flex items-center space-x-2">
             {/* Official Routica Vector Logo */}
             <RouticaLogo variant="light" height={22} className="drop-shadow-xs" />
-            
-            <span className="hidden">Routica Assistant</span>
+            <span className="sr-only">Routica Assistant</span>
+
             <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-blue-500/15 text-blue-400 border border-blue-400/30 text-[10px] font-semibold tracking-wide uppercase">
               <Sparkles className="w-2.5 h-2.5 text-blue-400 animate-pulse" />
               AI
@@ -39,7 +47,23 @@ export function ChatHeader() {
       </div>
 
       {/* Header Actions */}
-      <div className="flex items-center space-x-1">
+      <div className="flex items-center space-x-1.5">
+        {/* Toggle Quick Topics Button */}
+        <button
+          type="button"
+          onClick={toggleQuickTopics}
+          title={isQuickTopicsOpen ? "Close Quick Topics" : "View Suggested Questions & FAQs"}
+          aria-label="Toggle Quick Topics"
+          className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-xl text-xs font-medium transition-all ${
+            isQuickTopicsOpen
+              ? "bg-blue-600 text-white shadow-xs"
+              : "bg-slate-800/80 text-slate-300 hover:text-white hover:bg-slate-800 border border-slate-700/60"
+          }`}
+        >
+          <Compass className={`w-3.5 h-3.5 ${isQuickTopicsOpen ? "rotate-45" : ""} transition-transform`} />
+          <span className="text-[11px]">Topics</span>
+        </button>
+
         {messages.length > 0 && (
           <IconButton
             icon={RotateCcw}
