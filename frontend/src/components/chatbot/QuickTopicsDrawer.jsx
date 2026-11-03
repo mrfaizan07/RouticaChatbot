@@ -42,7 +42,7 @@ export function QuickTopicsDrawer() {
   return (
     <AnimatePresence>
       {isQuickTopicsOpen && (
-        <div className="absolute inset-0 z-40 flex items-center justify-center p-3 sm:p-4">
+        <div className="absolute inset-x-0 bottom-0 top-[58px] z-40 flex items-center justify-center p-3 sm:p-4">
           {/* Backdrop Blur Overlay */}
           <motion.div
             initial={{ opacity: 0 }}

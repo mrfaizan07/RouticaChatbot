@@ -29,20 +29,15 @@ export function ChatbotWindow() {
           role="dialog"
           aria-label="Routica Chat Assistant"
           aria-modal="false"
-          initial={{ opacity: 0, y: 24, scale: 0.96 }}
+          initial={{ opacity: 0, y: 20, scale: 0.95 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
-          exit={{ opacity: 0, y: 20, scale: 0.96 }}
-          transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
-          className="fixed bottom-0 right-0 sm:bottom-24 sm:right-6 z-50 w-full h-[100dvh] sm:h-[660px] sm:max-h-[88vh] sm:w-[430px] flex flex-col bg-white sm:rounded-3xl shadow-2xl shadow-slate-950/25 border border-slate-200/90 overflow-hidden"
+          exit={{ opacity: 0, y: 16, scale: 0.95 }}
+          transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
+          className="fixed bottom-0 right-0 sm:bottom-24 sm:right-6 z-50 w-full sm:w-[420px] h-[100dvh] sm:h-[640px] sm:max-h-[85vh] flex flex-col bg-white sm:rounded-3xl shadow-2xl shadow-slate-950/25 border border-slate-200/90 overflow-hidden origin-bottom-right"
         >
-          <br></br>
-          <br></br>
           <ChatHeader />
           <ChatMessages />
           <ChatInput />
-          <br></br>
-          <QuickTopicsDrawer />
-          {/* Centered Modal Overlay in the Middle of the Chat Screen */}
           <QuickTopicsDrawer />
         </motion.div>
       )}

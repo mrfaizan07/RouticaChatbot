@@ -56,11 +56,12 @@ class InMemoryRateLimiter:
         self.app = app
         self.default_max = max_requests
         self.window_seconds = window_seconds
-        # Route-specific max requests per window
+        # Route-specific max requests per window (relaxed for local development)
+        is_dev = settings.APP_ENV != "production"
         self.route_limits = {
-            "/api/v1/chat": 25,
-            "/api/v1/chat/stream": 25,
-            "/api/v1/auth/login": 10,
+            "/api/v1/chat": 60 if is_dev else 25,
+            "/api/v1/chat/stream": 60 if is_dev else 25,
+            "/api/v1/auth/login": 60 if is_dev else 10,
         }
         self.requests: dict[str, list[float]] = defaultdict(list)
         self._last_cleanup = time.time()
@@ -81,6 +82,11 @@ class InMemoryRateLimiter:
         session_id = headers.get("x-session-id")
         client = scope.get("client")
         client_ip = forwarded.split(",")[0].strip() if forwarded else (client[0] if client else "unknown")
+
+        # Whitelist localhost during development so testing isn't blocked
+        if settings.APP_ENV != "production" and client_ip in ("127.0.0.1", "::1", "localhost"):
+            await self.app(scope, receive, send)
+            return
 
         # Composite identifier to prevent simple IP spoofing
         rate_key = f"{client_ip}:{session_id}" if session_id else client_ip

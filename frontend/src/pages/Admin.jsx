@@ -385,10 +385,7 @@ export function Admin({ onBackToHome }) {
             <span className="text-[11px] font-mono font-semibold px-2 py-0.5 rounded-md bg-slate-100 text-slate-700 border border-slate-200">
               Admin Platform
             </span>
-            <span className="hidden md:inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200/80 text-[10px] font-medium">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-              Atlas Vector Engine Live
-            </span>
+
           </div>
 
           <div className="flex items-center space-x-2.5 text-xs">
@@ -437,11 +434,10 @@ export function Admin({ onBackToHome }) {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`flex items-center gap-2 py-3.5 border-b-2 transition-all ${
-                  active
+                className={`flex items-center gap-2 py-3.5 border-b-2 transition-all ${active
                     ? "border-blue-600 text-blue-600 font-semibold"
                     : "border-transparent text-slate-500 hover:text-slate-900"
-                }`}
+                  }`}
               >
                 <Icon className="w-4 h-4" />
                 <span>{tab.label}</span>
@@ -455,13 +451,12 @@ export function Admin({ onBackToHome }) {
       <main className="max-w-7xl mx-auto p-6 md:p-8">
         {actionMessage && (
           <div
-            className={`mb-6 p-3.5 rounded-2xl border text-xs flex items-center justify-between shadow-xs animate-fade-in ${
-              actionType === "success"
+            className={`mb-6 p-3.5 rounded-2xl border text-xs flex items-center justify-between shadow-xs animate-fade-in ${actionType === "success"
                 ? "bg-emerald-50 border-emerald-200 text-emerald-900"
                 : actionType === "error"
-                ? "bg-red-50 border-red-200 text-red-900"
-                : "bg-blue-50 border-blue-200 text-blue-900"
-            }`}
+                  ? "bg-red-50 border-red-200 text-red-900"
+                  : "bg-blue-50 border-blue-200 text-blue-900"
+              }`}
           >
             <div className="flex items-center gap-2">
               {actionType === "success" ? (
@@ -715,11 +710,10 @@ export function Admin({ onBackToHome }) {
                     key={pill.id}
                     type="button"
                     onClick={() => setKnowledgeFilter(pill.id)}
-                    className={`px-3 py-1 rounded-xl font-medium transition-colors ${
-                      knowledgeFilter === pill.id
+                    className={`px-3 py-1 rounded-xl font-medium transition-colors ${knowledgeFilter === pill.id
                         ? "bg-slate-900 text-white"
                         : "bg-slate-100 text-slate-600 hover:bg-slate-200"
-                    }`}
+                      }`}
                   >
                     {pill.label}
                   </button>
@@ -1002,11 +996,10 @@ export function Admin({ onBackToHome }) {
                 onDragLeave={handleDrag}
                 onDragOver={handleDrag}
                 onDrop={handleDrop}
-                className={`relative border-2 border-dashed rounded-2xl p-8 text-center transition-all ${
-                  dragActive
+                className={`relative border-2 border-dashed rounded-2xl p-8 text-center transition-all ${dragActive
                     ? "border-blue-500 bg-blue-50/50"
                     : "border-slate-200 bg-slate-50/40 hover:bg-slate-50 hover:border-slate-300"
-                }`}
+                  }`}
               >
                 <div className="w-12 h-12 rounded-2xl bg-white border border-slate-200 shadow-xs flex items-center justify-center mx-auto text-blue-600 mb-3">
                   <Upload className="w-6 h-6" />
