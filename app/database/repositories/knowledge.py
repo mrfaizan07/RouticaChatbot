@@ -111,6 +111,9 @@ class KnowledgeRepository:
         cursor = self.collection.find({"is_active": True}).skip(skip).limit(limit)
         chunks = []
         async for doc in cursor:
-            doc["_id"] = str(doc["_id"])
-            chunks.append(KnowledgeChunk(**doc))
+            try:
+                doc["_id"] = str(doc["_id"])
+                chunks.append(KnowledgeChunk(**doc))
+            except Exception as e:
+                logger.warning("Failed to parse chunk %s: %s", doc.get("_id"), e)
         return chunks

@@ -5,6 +5,7 @@ from app.core.exceptions import NotFoundException
 from app.database.repositories.knowledge import KnowledgeRepository
 from app.database.repositories.website_pages import WebsitePageRepository
 from app.dependencies import get_current_admin, get_knowledge_repo, get_website_page_repo
+from app.models.knowledge import KnowledgeChunk
 from app.models.user import User
 from app.schemas.knowledge import KnowledgeChunkResponse, KnowledgeListResponse, ReindexResponse
 from app.services.knowledge_service import KnowledgeService
@@ -14,12 +15,12 @@ router = APIRouter(prefix="/knowledge", tags=["Knowledge"])
 
 @router.get("", response_model=KnowledgeListResponse)
 async def list_knowledge_chunks(
-    limit: int = Query(default=50, ge=1, le=100),
+    limit: int = Query(default=100, ge=1, le=1000),
     skip: int = Query(default=0, ge=0),
     current_admin: User = Depends(get_current_admin),
     knowledge_repo: KnowledgeRepository = Depends(get_knowledge_repo),
 ) -> KnowledgeListResponse:
-    """Lists indexed knowledge chunks with metadata."""
+    """Lists indexed knowledge chunks directly from MongoDB Atlas vector storage."""
     chunks = await knowledge_repo.list_chunks(limit=limit, skip=skip)
     total = await knowledge_repo.count_chunks()
 
@@ -79,10 +80,8 @@ async def delete_knowledge_chunk(
     knowledge_id: str,
     current_admin: User = Depends(get_current_admin),
     knowledge_repo: KnowledgeRepository = Depends(get_knowledge_repo),
-) -> dict[str, str]:
-    """Deletes an individual knowledge chunk by ID."""
-    success = await knowledge_repo.delete_chunk(knowledge_id)
-    if not success:
-        raise NotFoundException("Knowledge chunk not found")
-    return {"message": "Knowledge chunk successfully deleted"}
-
+) -> dict[str, bool]:
+    deleted = await knowledge_repo.delete_chunk(knowledge_id)
+    if not deleted:
+        raise NotFoundException(resource_type="KnowledgeChunk", identifier=knowledge_id)
+    return {"success": True}

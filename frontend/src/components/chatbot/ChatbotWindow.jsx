@@ -35,10 +35,15 @@ export function ChatbotWindow() {
           transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
           className="fixed bottom-0 right-0 sm:bottom-24 sm:right-6 z-50 w-full h-[100dvh] sm:h-[660px] sm:max-h-[88vh] sm:w-[430px] flex flex-col bg-white sm:rounded-3xl shadow-2xl shadow-slate-950/25 border border-slate-200/90 overflow-hidden"
         >
+          <br></br>
+          <br></br>
           <ChatHeader />
-          <QuickTopicsDrawer />
           <ChatMessages />
           <ChatInput />
+          <br></br>
+          <QuickTopicsDrawer />
+          {/* Centered Modal Overlay in the Middle of the Chat Screen */}
+          <QuickTopicsDrawer />
         </motion.div>
       )}
     </AnimatePresence>

@@ -124,16 +124,25 @@ export function Admin({ onBackToHome }) {
         authFetch("/api/v1/admin/providers/status").then((r) => r.json()),
         authFetch("/api/v1/admin/scraping/jobs").then((r) => r.json()),
         authFetch("/api/v1/admin/documents").then((r) => r.json()),
-        authFetch("/api/v1/knowledge?limit=150").then((r) => r.json()),
+        authFetch("/api/v1/knowledge?limit=100").then((r) => r.json()),
       ]);
 
-      if (dashRes.status === "fulfilled") setDashboard(dashRes.value);
-      if (provRes.status === "fulfilled") setProviders(provRes.value);
-      if (jobsRes.status === "fulfilled") setScrapingJobs(jobsRes.value || []);
-      if (docsRes.status === "fulfilled") setDocuments(docsRes.value || []);
-      if (knowRes.status === "fulfilled") {
-        setKnowledge(knowRes.value.chunks || []);
-        setKnowledgeTotal(knowRes.value.total || 0);
+      if (dashRes.status === "fulfilled" && dashRes.value) {
+        setDashboard(dashRes.value);
+      }
+      if (provRes.status === "fulfilled" && provRes.value) {
+        setProviders(provRes.value);
+      }
+      if (jobsRes.status === "fulfilled" && Array.isArray(jobsRes.value)) {
+        setScrapingJobs(jobsRes.value);
+      }
+      if (docsRes.status === "fulfilled" && Array.isArray(docsRes.value)) {
+        setDocuments(docsRes.value);
+      }
+      if (knowRes.status === "fulfilled" && knowRes.value) {
+        const chunks = Array.isArray(knowRes.value.chunks) ? knowRes.value.chunks : [];
+        setKnowledge(chunks);
+        setKnowledgeTotal(typeof knowRes.value.total === "number" ? knowRes.value.total : chunks.length);
       }
     } catch (err) {
       console.warn("Failed to load admin data:", err);
@@ -332,24 +341,35 @@ export function Admin({ onBackToHome }) {
   }
 
   // 2. Authenticated Admin Dashboard
-  const filteredChunks = knowledge.filter((c) => {
+  const filteredChunks = (knowledge || []).filter((c) => {
+    if (!c) return false;
+    const search = (knowledgeSearch || "").trim().toLowerCase();
+    const title = (c.source_title || "").toLowerCase();
+    const content = (c.content || "").toLowerCase();
+    const url = (c.source_url || "").toLowerCase();
+
     const matchesSearch =
-      c.source_title?.toLowerCase().includes(knowledgeSearch.toLowerCase()) ||
-      c.content?.toLowerCase().includes(knowledgeSearch.toLowerCase()) ||
-      c.source_url?.toLowerCase().includes(knowledgeSearch.toLowerCase());
+      !search ||
+      title.includes(search) ||
+      content.includes(search) ||
+      url.includes(search);
 
     if (!matchesSearch) return false;
 
     if (knowledgeFilter === "explorer1") {
       return (
-        c.source_title?.toLowerCase().includes("explorer i") ||
-        c.content?.toLowerCase().includes("explorer i")
+        title.includes("explorer i") ||
+        title.includes("explorer 1") ||
+        content.includes("explorer i") ||
+        content.includes("explorer 1")
       );
     }
     if (knowledgeFilter === "explorer2") {
       return (
-        c.source_title?.toLowerCase().includes("explorer ii") ||
-        c.content?.toLowerCase().includes("explorer ii")
+        title.includes("explorer ii") ||
+        title.includes("explorer 2") ||
+        content.includes("explorer ii") ||
+        content.includes("explorer 2")
       );
     }
     return true;
@@ -705,7 +725,7 @@ export function Admin({ onBackToHome }) {
                   </button>
                 ))}
                 <span className="text-xs text-slate-400 ml-2 hidden lg:inline">
-                  {filteredChunks.length} displayed
+                  {filteredChunks.length} displayed ({knowledgeTotal || filteredChunks.length} total)
                 </span>
               </div>
             </div>
@@ -723,38 +743,79 @@ export function Admin({ onBackToHome }) {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
-                  {filteredChunks.slice(0, 100).map((c, i) => (
-                    <tr key={c.id || i} className="hover:bg-slate-50/60 transition-colors">
-                      <td className="py-3 px-4 font-semibold text-slate-900 max-w-[200px] truncate">
-                        {c.source_title || "Routica Documentation"}
-                      </td>
-                      <td className="py-3 px-4 text-blue-600 max-w-[180px] truncate">
-                        <a
-                          href={c.source_url}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="hover:underline flex items-center gap-1"
-                        >
-                          <span className="truncate">{c.source_url?.replace(/^https?:\/\//, "")}</span>
-                          <ExternalLink className="w-3 h-3 flex-shrink-0" />
-                        </a>
-                      </td>
-                      <td className="py-3 px-4 text-slate-400 font-mono text-[11px]">
-                        #{c.chunk_index ?? i}
-                      </td>
-                      <td className="py-3 px-4 text-slate-600 max-w-md truncate font-normal">
-                        {c.content}
-                      </td>
-                      <td className="py-3 px-4 text-right">
-                        <button
-                          onClick={() => setSelectedChunk(c)}
-                          className="px-2.5 py-1 text-xs font-semibold rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 transition-colors"
-                        >
-                          View
-                        </button>
+                  {loadingData ? (
+                    <tr>
+                      <td colSpan={5} className="py-12 text-center text-slate-400">
+                        <div className="flex items-center justify-center gap-2">
+                          <RefreshCw className="w-4 h-4 animate-spin text-blue-600" />
+                          <span>Fetching knowledge chunks from MongoDB...</span>
+                        </div>
                       </td>
                     </tr>
-                  ))}
+                  ) : filteredChunks.length === 0 ? (
+                    <tr>
+                      <td colSpan={5} className="py-12 text-center text-slate-400">
+                        <div className="flex flex-col items-center justify-center max-w-sm mx-auto">
+                          <Database className="w-8 h-8 text-slate-300 mb-2" />
+                          <p className="text-xs font-semibold text-slate-700">No knowledge chunks found</p>
+                          <p className="text-[11px] text-slate-400 mt-0.5">
+                            {knowledgeSearch || knowledgeFilter !== "all"
+                              ? "Try resetting filters or clearing the search bar."
+                              : "No chunks currently indexed in database. Trigger a crawl to populate."}
+                          </p>
+                          <div className="flex items-center gap-2 mt-3">
+                            <button
+                              type="button"
+                              onClick={() => setActiveTab("scraper")}
+                              className="px-3 py-1.5 rounded-xl bg-slate-900 text-white text-[11px] font-semibold hover:bg-slate-800 transition-colors"
+                            >
+                              Crawl Website
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => setActiveTab("uploads")}
+                              className="px-3 py-1.5 rounded-xl border border-slate-200 text-slate-700 text-[11px] font-semibold hover:bg-slate-50 transition-colors"
+                            >
+                              Upload Dataset
+                            </button>
+                          </div>
+                        </div>
+                      </td>
+                    </tr>
+                  ) : (
+                    filteredChunks.slice(0, 100).map((c, i) => (
+                      <tr key={c.id || i} className="hover:bg-slate-50/60 transition-colors">
+                        <td className="py-3 px-4 font-semibold text-slate-900 max-w-[200px] truncate">
+                          {c.source_title || "Routica Documentation"}
+                        </td>
+                        <td className="py-3 px-4 text-blue-600 max-w-[180px] truncate">
+                          <a
+                            href={c.source_url}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="hover:underline flex items-center gap-1"
+                          >
+                            <span className="truncate">{c.source_url?.replace(/^https?:\/\//, "")}</span>
+                            <ExternalLink className="w-3 h-3 flex-shrink-0" />
+                          </a>
+                        </td>
+                        <td className="py-3 px-4 text-slate-400 font-mono text-[11px]">
+                          #{c.chunk_index ?? i}
+                        </td>
+                        <td className="py-3 px-4 text-slate-600 max-w-md truncate font-normal">
+                          {c.content}
+                        </td>
+                        <td className="py-3 px-4 text-right">
+                          <button
+                            onClick={() => setSelectedChunk(c)}
+                            className="px-2.5 py-1 text-xs font-semibold rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 transition-colors"
+                          >
+                            View
+                          </button>
+                        </td>
+                      </tr>
+                    ))
+                  )}
                 </tbody>
               </table>
             </div>
