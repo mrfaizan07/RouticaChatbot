@@ -1,7 +1,13 @@
 """Authentication schemas for request validation and response models."""
 
 from datetime import datetime
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import BaseModel, Field
+
+try:
+    import email_validator  # noqa: F401
+    from pydantic import EmailStr
+except Exception:
+    EmailStr = str
 
 
 class LoginRequest(BaseModel):

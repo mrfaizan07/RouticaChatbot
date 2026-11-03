@@ -1,7 +1,13 @@
 """User data model."""
 
 from datetime import datetime, timezone
-from pydantic import BaseModel, ConfigDict, EmailStr, Field
+from pydantic import BaseModel, ConfigDict, Field
+
+try:
+    import email_validator  # noqa: F401
+    from pydantic import EmailStr
+except Exception:
+    EmailStr = str
 
 
 class User(BaseModel):
