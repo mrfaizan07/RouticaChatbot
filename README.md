@@ -184,3 +184,4 @@ The repository includes a ready-to-use [`render.yaml`](render.yaml) file for one
 
 ## License
 Proprietary & Confidential - Designed for Routica.
+
